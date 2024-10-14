@@ -12,28 +12,33 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 全ての履歴を取得
+
+      - name: List files for debug
+        run: |
+          echo "Listing root directory"
+          ls -la
+          echo "Checking nextjs-flask-sample-main directory"
+          ls -la nextjs-flask-sample-main  # 正しいパスを指定
 
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
-          node-version: '20.x'
+          node-version: '20.x'  # Node.jsのバージョンを20.xに変更
 
-      - name: Install dependencies and build in frontend directory
+      - name: npm install, build, and test
         run: |
-          cd frontend
+          cd nextjs-flask-sample-main/frontend  # 必要に応じて正しいパスに修正
           npm install
           npm run build --if-present
           npm run test --if-present
-          
-      - name: Copy artifact for deployment job
-        run: |
-          mkdir deploy
-          cp -r ./.next/standalone/. ./deploy
-          cp -r ./public ./deploy
-          cp -r ./.next/static/. ./deploy/.next/static
-          
+
       - name: Zip artifact for deployment
-        run: zip release.zip ./deploy -r 
+        run: zip release.zip ./* -r
+
+      - name: List contents of the zip
+        run: unzip -l release.zip  # ZIPに含まれるファイルを確認
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -47,7 +52,7 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
+    
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
@@ -63,7 +68,7 @@ jobs:
         with:
           app-name: 'tech0-gen-6-step4-studentwebapp-4'
           slot-name: 'Production'
-          package: ./deploy
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_BFBE04A844B142B9961148719E656BE1 }}
+          package: './nextjs-flask-sample-main'  # 必要に応じて正しいパスを指定
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_EC02C92054E94AFAAEDFA8F84F3C11D4 }}
 
 
