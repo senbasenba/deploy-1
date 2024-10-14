@@ -63,4 +63,8 @@ jobs:
           slot-name: 'Production'
           package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_EC02C92054E94AFAAEDFA8F84F3C11D4 }}
+      - name: List files for debug
+        run: |
+          ls -la  # 最初のレベルのディレクトリを確認
+          ls -la my-app  # 必要に応じて、ディレクトリ名を調整して次のレベルも確認
 
