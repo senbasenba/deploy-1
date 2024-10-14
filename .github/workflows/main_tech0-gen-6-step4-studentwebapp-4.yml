@@ -25,7 +25,6 @@ jobs:
           npm run build --if-present
           npm run test --if-present
 
-
       - name: Zip artifact for deployment
         run: zip release.zip ./* -r
 
@@ -60,8 +59,3 @@ jobs:
           package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_EC02C92054E94AFAAEDFA8F84F3C11D4 }}
 
-　　　- uses: actions/checkout@v4
-   　with:
-    fetch-depth: 0  # 全ての履歴を取得
-
- 
