@@ -12,6 +12,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 全ての履歴を取得
+
+      - name: List files for debug
+        run: ls -la  # リポジトリのディレクトリ構造を確認
 
       - name: Set up Node.js version
         uses: actions/setup-node@v3
