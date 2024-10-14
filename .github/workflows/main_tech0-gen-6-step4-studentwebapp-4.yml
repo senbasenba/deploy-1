@@ -16,7 +16,11 @@ jobs:
           fetch-depth: 0  # 全ての履歴を取得
 
       - name: List files for debug
-        run: ls -la  # リポジトリのディレクトリ構造を確認
+        run: |
+          echo "Listing root directory"
+          ls -la
+          echo "Checking my-app directory"
+          ls -la my-app  # 必要に応じてパスを調整
 
       - name: Set up Node.js version
         uses: actions/setup-node@v3
@@ -25,7 +29,7 @@ jobs:
 
       - name: npm install, build, and test
         run: |
-          cd frontend  # frontendディレクトリに移動
+          cd my-app/frontend  # 必要に応じて正しいパスに修正
           npm install
           npm run build --if-present
           npm run test --if-present
@@ -63,8 +67,5 @@ jobs:
           slot-name: 'Production'
           package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_EC02C92054E94AFAAEDFA8F84F3C11D4 }}
-      - name: List files for debug
-        run: |
-          ls -la  # 最初のレベルのディレクトリを確認
-          ls -la my-app  # 必要に応じて、ディレクトリ名を調整して次のレベルも確認
+
 
