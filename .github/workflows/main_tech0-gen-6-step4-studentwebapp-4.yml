@@ -11,10 +11,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # リポジトリをクローン
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # 全ての履歴を取得
 
+      # デバッグ用にファイルリストを表示
       - name: List files for debug
         run: |
           echo "Listing root directory"
@@ -22,11 +24,13 @@ jobs:
           echo "Checking nextjs-flask-sample-main directory"
           ls -la nextjs-flask-sample-main
 
+      # Node.jsのバージョンを設定
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
 
+      # フロントエンドの依存関係をインストール、ビルド、テスト
       - name: npm install, build, and test (frontend)
         run: |
           cd nextjs-flask-sample-main/frontend
@@ -34,12 +38,15 @@ jobs:
           npm run build --if-present
           npm run test --if-present
 
+      # ZIPアーカイブを作成
       - name: Zip artifact for deployment
         run: zip -r release.zip nextjs-flask-sample-main/frontend
 
+      # ZIPファイルの内容を確認
       - name: List contents of the zip
         run: unzip -l release.zip
 
+      # デプロイメント用にアーティファクトをアップロード
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
@@ -51,23 +58,26 @@ jobs:
     needs: build
     environment:
       name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}  # 確認が必要
-
+      url: 'https://tech0-gen-6-step4-studentwebapp-4.azurewebsites.net'  # App ServiceのURLを直接指定
+    
     steps:
+      # ビルドジョブからアーティファクトをダウンロード
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: node-app
 
+      # デプロイ用にZIPファイルを解凍
       - name: Unzip artifact for deployment
         run: unzip release.zip
-
+      
+      # Azure Web Appへのデプロイ
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'tech0-gen-6-step4-studentwebapp-4'
+          app-name: 'tech0-gen-6-step4-studentwebapp-4'  # Azure App Serviceの名前
           slot-name: 'Production'
-          package: './nextjs-flask-sample-main/frontend'
+          package: './nextjs-flask-sample-main/frontend'  # デプロイするディレクトリのパス
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_EC02C92054E94AFAAEDFA8F84F3C11D4 }}
 
