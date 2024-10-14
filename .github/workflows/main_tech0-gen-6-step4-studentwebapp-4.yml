@@ -60,3 +60,5 @@ jobs:
           package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_EC02C92054E94AFAAEDFA8F84F3C11D4 }}
 
+      - uses: actions/checkout@v4
+
